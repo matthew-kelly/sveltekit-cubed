@@ -1,21 +1,39 @@
 <script>
-	import * as SC from 'svelte-cubed';
-	import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+	import { fly } from 'svelte/transition';
+	import Avocado from '$lib/Avocado.svelte';
 
-	let geometry, material, model;
-	let path = '../../static/Avocado/Avocado.gltf';
-	let loader = new GLTFLoader();
-	loader.load(path, (gltf) => {
-		model = gltf.scene.children[0];
-		geometry = model.geometry;
-		material = model.material;
-	});
+	let isShowing = false;
+
+	function hitButton() {
+		isShowing = true;
+		setTimeout(() => {
+			isShowing = false;
+		}, 40);
+	}
 </script>
 
-<SC.Canvas antialias alpha>
-	<SC.Mesh {geometry} {material} />
-	<SC.PerspectiveCamera position={[0.1, 0.2, -0.1]} />
-	<SC.OrbitControls enableZoom={true} />
-	<SC.AmbientLight intensity={0.7} />
-	<SC.PointLight position={[1, 5, 1]} decay={2} />
-</SC.Canvas>
+<header>
+	<h1>Avocado</h1>
+</header>
+
+<div style:position="relative">
+	{#if isShowing}
+		<div class="avocado" out:fly={{ opacity: 0, y: -100, duration: 1000 }}>
+			<Avocado />
+		</div>
+	{/if}
+	<button on:click={hitButton}>Avocado</button>
+</div>
+
+<style>
+	header {
+		display: flex;
+		margin-bottom: 60px;
+	}
+
+	.avocado {
+		position: absolute;
+		top: -30px;
+		z-index: -1;
+	}
+</style>
